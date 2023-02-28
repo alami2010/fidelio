@@ -1,14 +1,14 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:qatar_wc/styles/colors.dart';
-import 'package:qatar_wc/styles/text_constants.dart';
-import 'package:qatar_wc/views/standingview.dart';
-import 'package:qatar_wc/views/predictionview.dart';
-import 'package:qatar_wc/views/homeview.dart';
-import 'package:qatar_wc/views/newsview.dart';
-import 'package:qatar_wc/views/splash.dart';
-import 'package:qatar_wc/views/moreview.dart';
+import 'package:fidelway/styles/colors.dart';
+import 'package:fidelway/styles/text_constants.dart';
+import 'package:fidelway/views/standingview.dart';
+import 'package:fidelway/views/predictionview.dart';
+import 'package:fidelway/views/homeview.dart';
+import 'package:fidelway/views/newsview.dart';
+import 'package:fidelway/views/splash.dart';
+import 'package:fidelway/views/moreview.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class MainPage extends StatefulWidget {
@@ -57,29 +57,24 @@ class _HomeState extends State<Home>  with SingleTickerProviderStateMixin{
 
   TabController controller;
 
-  PersistentTabController _controller = PersistentTabController(initialIndex: 2);
+  PersistentTabController _controller = PersistentTabController(initialIndex: 1);
 
   List<Widget> _buildScreens() {
     return [
-      PredictionView(),
-      NewsView(),
+
+
+      GenerateScreen(),
       HomeView(),
-      StandingView(),
       MoreView(),
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
-      PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.bell),
-        title: ("Prediction"),
-        activeColorPrimary: MyColors.backgroundColor2,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.news),
-        title: ("News"),
+        title: ("Nouveau"),
         activeColorPrimary: MyColors.backgroundColor2,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
@@ -88,31 +83,24 @@ class _HomeState extends State<Home>  with SingleTickerProviderStateMixin{
           "images/logo.png",
           width: 40,
         ),
-        title: ("Qatar WC"),
-        activeColorPrimary: MyColors.backgroundColor,
+        title: ("FidelWay"),
+        activeColorPrimary: MyColors.btnOk,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.clock_solid),
-        title: ("Standings"),
+        title: ("x"),
 
         activeColorPrimary: MyColors.backgroundColor2,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-      PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.clock_solid),
-        title: ("More"),
-        activeColorPrimary: MyColors.backgroundColor2,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+
     ];
   }
 
   @override
   void initState() {
-
-    controller = new TabController(length: 4, vsync: this);
-
+    controller = new TabController(length: 2, vsync: this);
     controller.dispose();
     super.initState();
   }

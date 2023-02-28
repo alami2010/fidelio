@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:qatar_wc/model/Categories.dart';
+import 'package:fidelway/model/Categories.dart';
 
 import '../model/ordershistory.dart';
 

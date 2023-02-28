@@ -1,7 +1,7 @@
 class TConstants {
-  static final title = "FIFA World Cup";
+  static final title = "FIDELWAY";
   static final home = "Home";
-  static final news = "News";
+  static final news = "Nouveau";
   static final cart = "Cart";
   static final place_order = "Place Order";
   static final order_more = "Order More";
@@ -9,7 +9,7 @@ class TConstants {
   static final stadiums = "Stadiums";
   static final match = "Matches";
   static final predictions = "Predictions";
-  static final standings = "Standings";
+  static final standings = "Standingxs";
   static final yes = "Yes";
   static final no = "No";
   static final discount = "Discount";

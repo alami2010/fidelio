@@ -1,4 +1,4 @@
-# qatar_wc
+# fidelway
 
 A flutter app for Qatar World Cup
 

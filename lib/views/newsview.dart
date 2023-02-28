@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:qatar_wc/views/singleNewsView.dart';
+import 'package:fidelway/views/singleNewsView.dart';
 
 import '../styles/colors.dart';
 import '../styles/text_constants.dart';

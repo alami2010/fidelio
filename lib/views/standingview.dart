@@ -1,408 +1,175 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:fidelway/model/APIRest.dart';
 import 'package:flutter/material.dart';
-import 'package:qatar_wc/styles/text_constants.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
-import '../model/Cart.dart';
-import '../styles/colors.dart';
-
-class StandingView extends StatefulWidget {
-  const StandingView({Key key}) : super(key: key);
-
+class GenerateScreen extends StatefulWidget {
   @override
-  _StandingViewState createState() => _StandingViewState();
+  State<StatefulWidget> createState() => GenerateScreenState();
 }
 
-class _StandingViewState extends State<StandingView> {
-  int _itemCount = 0;
-  List<MyCart> cartList = [];
+class GenerateScreenState extends State<GenerateScreen> {
+  static const double _topSectionTopPadding = 50.0;
+  static const double _topSectionBottomPadding = 20.0;
+  static const double _topSectionHeight = 50.0;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  GlobalKey globalKey = new GlobalKey();
+  String _dataString = "";
+  String _inputErrorText;
+  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _telController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          TConstants.standings,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        title: Text('FidelWay Nouveaux client'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: _captureAndSharePng,
+          )
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          color: Colors.white,
-          width: MediaQuery.of(context).size.width,
-          height: 1500,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 10,),
-                Text(
-                  "Group A",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+      body: _contentWidget(),
+    );
+  }
+
+  Future<void> _captureAndSharePng() async {
+    try {
+      RenderRepaintBoundary boundary =
+          globalKey.currentContext.findRenderObject();
+      var image = await boundary.toImage();
+      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData.buffer.asUint8List();
+
+      final tempDir = await getTemporaryDirectory();
+      final file = await new File('${tempDir.path}/image.png').create();
+      await file.writeAsBytes(pngBytes);
+
+      final channel = const MethodChannel('channel:me.alfian.share/share');
+      channel.invokeMethod('shareFile', 'image.png');
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  _contentWidget() {
+    final bodyHeight = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).viewInsets.bottom;
+    return Container(
+      color: const Color(0xFFFFFFFF),
+      child: Column(
+        children: <Widget>[
+          const SizedBox(height: 24),
+          Form(
+            key: _formKey,
+            child: Column(children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nom Complet *',
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 14),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                        offset: Offset(0, 2), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: DataTable(
-                    horizontalMargin: 0,
-                    columnSpacing: 20,
-                    columns: [
-                      DataColumn(
-                          label: Text(
-                          'Team',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'P',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'G',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gs',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gd',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Pts',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                    ],
-                  ),
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _telController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Numéro de télephone *',
                 ),
-                SizedBox(height: 10,),
-                Text(
-                  "Group B",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 14),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                        offset: Offset(0, 2), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: DataTable(
-                    horizontalMargin: 0,
-                    columnSpacing: 20,
-                    columns: [
-                      DataColumn(
-                          label: Text(
-                              'Team',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                          )),
-                      DataColumn(label: Text(
-                          'P',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'G',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gs',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gd',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Pts',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Text(
-                  "Group C",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 14),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                        offset: Offset(0, 2), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: DataTable(
-                    horizontalMargin: 0,
-                    columnSpacing: 20,
-                    columns: [
-                      DataColumn(
-                          label: Text(
-                              'Team',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                          )),
-                      DataColumn(label: Text(
-                          'P',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'G',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gs',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gd',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Pts',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Text(
-                  "Group D",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 14),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: MyColors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                        offset: Offset(0, 2), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: DataTable(
-                    horizontalMargin: 0,
-                    columnSpacing: 20,
-                    columns: [
-                      DataColumn(
-                          label: Text(
-                              'Team',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                          )),
-                      DataColumn(label: Text(
-                          'P',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'G',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gs',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Gd',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                      DataColumn(label: Text(
-                          'Pts',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
-                      )),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(ListTile(leading: Image.asset("images/flag1.png",width: 30,),title: Text('Russia'),)),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('1')),
-                        DataCell(Text('2')),
-                      ]),
-                    ],
-                  ),
-                )
-              ]
+              )
+            ]),
           ),
-        ),
+          Row(
+            children: [
+              SizedBox(
+                height: 50,
+                width: 150,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.yellow,
+                    backgroundColor: Colors.black,
+                    shape: const BeveledRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                  ),
+                  child: Text(" Créer "),
+                  onPressed: () {
+                    setState(() {
+                      _dataString = "les_halles_" +
+                          DateTime.now().microsecondsSinceEpoch.toString();
+
+                      APIRest.create(_dataString, _nameController.text,
+                              _telController.text)
+                          .then((value) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Bien Créer"),
+                        ));
+                      });
+
+                      _inputErrorText = null;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 50,
+                width: 150,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.yellow,
+                    backgroundColor: Colors.black,
+                    shape: const BeveledRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                  ),
+                  child: Text("Scanner"),
+                  onPressed: () {
+                    setState(() {
+                      FlutterBarcodeScanner.scanBarcode(
+                              "#000000", "Sortir", true, ScanMode.QR)
+                          .then((code) {
+                        if (code != "-1") {
+                          APIRest.create(code, _nameController.text,
+                                  _telController.text)
+                              .then((value) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Bien Enregistrer"),
+                            ));
+                          });
+                        }
+                      });
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          if (_dataString.isNotEmpty)
+            Expanded(
+              child: Center(
+                child: RepaintBoundary(
+                  key: globalKey,
+                  child: QrImage(
+                    data: _dataString,
+                    size: 0.5 * bodyHeight,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
-    ));
+    );
   }
 }

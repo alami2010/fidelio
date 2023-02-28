@@ -1,4 +1,4 @@
-name: qatar_wc
+name: fidelway
 description: A flutter app for Qatar World Cup
 
 # The following line prevents the package from being accidentally published to
@@ -23,9 +23,15 @@ dependencies:
   expandable: ^5.0.1
   flutter_dash: ^0.0.1
   percent_indicator: ^4.0.1
-
-dependency_overrides:
   shared_preferences: ^2.0.0
+  flutter_barcode_scanner: ^2.0.0
+  qr_flutter: ^4.0.0
+  path_provider: ^2.0.11
+
+
+analyzer:
+  - enable-experiment:
+      - non-nullable
 
 dev_dependencies:
   flutter_test:

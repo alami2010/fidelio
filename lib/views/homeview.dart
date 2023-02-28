@@ -1,9 +1,11 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:qatar_wc/styles/text_constants.dart';
-import 'package:qatar_wc/views/singleMatchView.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:fidelway/styles/text_constants.dart';
 
+import '../model/APIRest.dart';
+import '../model/Client.dart';
 import '../styles/colors.dart';
 
 class HomeView extends StatefulWidget {
@@ -14,19 +16,36 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-
   bool notification = false;
+  Client client = Client();
 
+  void scanQrCode() {
+
+ FlutterBarcodeScanner.scanBarcode("#000000", "Cancel", true, ScanMode.QR)
+        .then((value) {
+      APIRest.scan(value).then((value) {
+        setState(() {
+          // adding a new marker to map
+          client = value;
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(client);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: true,
           title: Text(
             TConstants.title,
-            style: TextStyle(fontSize: 20,fontFamily: 'QatarBold', color: MyColors.backgroundColor, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'QatarBold',
+                color: MyColors.backgroundColor,
+                fontWeight: FontWeight.bold),
           ),
         ),
         body: SingleChildScrollView(
@@ -35,15 +54,6 @@ class _HomeViewState extends State<HomeView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
 
-              Container(
-                margin: EdgeInsets.only(left: 10,top: 5,bottom: 0),
-                child: Text(
-                  'News',
-                  style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
               SizedBox(
                   height: 200.0,
                   width: MediaQuery.of(context).size.width,
@@ -51,209 +61,170 @@ class _HomeViewState extends State<HomeView> {
                     margin: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: MyColors.backgroundColor
-                    ),
+                        color: MyColors.backgroundColor),
                     child: Carousel(
                       borderRadius: true,
                       dotBgColor: Colors.transparent,
                       images: [
-                        ExactAssetImage("images/banner.jpg"),
-                        ExactAssetImage("images/banner.jpg"),
-                        ExactAssetImage("images/banner.jpg"),
+                        ExactAssetImage("images/fidelway-logo.png"),
+                        ExactAssetImage("images/fidelway-logo.png"),
+                        ExactAssetImage("images/fidelway-logo.png"),
                       ],
                     ),
-                  )
-              ),
+                  )),
 
               Container(
-                margin: EdgeInsets.only(left: 10,top: 5,bottom: 5),
-                child: Text(
-                  'Live Matches',
-                  style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              Container(
-                height: 150,margin: EdgeInsets.only(left: 7,bottom: 5),
-
-                child:ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 3,
-                  itemBuilder: (BuildContext context, int i) =>
-                      Container(
-                        child: Card(
-                          elevation: 8,
-                          shadowColor: Colors.grey,
-                          child: Container(
-                            width: 250.0,
-                            color: MyColors.blue,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Text('FIFA WORLD CUP',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                Text('Match 10',style: TextStyle(color: Colors.white),),
-                                Container(
-                                    child: ListTile(
-                                      leading: Column(
-                                        children: [
-                                          Image.asset("images/flag1.png",width: 50,height: 30,),
-                                          SizedBox(height: 4,),
-                                          Text(
-                                            'Argentina',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12.0),
-                                          ),
-                                        ],
-                                      ),
-                                      title: Text(
-                                        "2 : 0",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14.0),
-                                      ),
-                                      subtitle: Text(
-                                        'End',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12.0),
-                                      ),
-                                      trailing: Column(
-                                        children: [
-                                          Image.asset("images/flag2.png",width: 50,height: 30,),
-                                          SizedBox(height: 4,),
-                                          Text(
-                                            'Brazil',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12.0),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ),
-                              ],
+                  height: 150,
+                  margin: EdgeInsets.only(left: 7, bottom: 5),
+                  width: MediaQuery.of(context).size.width,
+                  child: Container(
+                    color: MyColors.blue,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        TextButton(
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.white),
                             ),
-                          ),
-                        ),
-                      ),
-                )
-              ),
+                            onPressed: () {
 
-              Container(
-                margin: EdgeInsets.only(left: 10,top: 5,bottom: 5),
-                child: Text(
-                  'Upcoming Matches',
-                  style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              for(int i=0; i<10; i++)
+                              scanQrCode();
+                            },
+                            child: Text('Scanner'))
+                      ],
+                    ),
+                  )),
+              if (client.code != null)
                 Container(
-                  margin: EdgeInsets.only(left: 5,right: 5),
-                  child: InkWell(
-                      onTap: (){
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => SingleMatchView("Group D - Match day 1 of 3")));
-                      },
-                      child: itemCard('Group D - Match day 1 of 3')
+                    height: 50,
+                    margin: EdgeInsets.only(left: 7, bottom: 5),
+                    width: MediaQuery.of(context).size.width,
+                    child: Container(
+                      color: MyColors.blue,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            "Votre solde est :" + client.solde.toString(),
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
+                    )),
+              if (client.code != null)
+                InkWell(
+                  onTap: () => setState(() {
+                    // adding a new marker to map
+                    client = Client();
+                  }),
+                  child: Container(
+                      height: 50,
+                      margin: EdgeInsets.only(left: 7, bottom: 5),
+                      width: MediaQuery.of(context).size.width,
+                      child: Container(
+                        color: MyColors.blue,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text(
+                              "Deconnection",
+                              style: TextStyle(color: Colors.white),
+                            )
+                          ],
+                        ),
+                      )),
+                ),
+              Row(
+                children: [
+                  if (client.amounts != null)
+                    for (int i = 0; i < client.amounts.length; i++)
+                      InkWell(
+                        onTap: () {
+                          APIRest.minus(client.code, client.amounts[i])
+                              .then((value) {
+                            setState(() {
+                              // adding a new marker to map
+                              client = value;
+                            });
+                          });
+                        },
+                        child: Container(
+                            height: 70,
+                            width: 70,
+                            margin: EdgeInsets.only(left: 7, bottom: 5),
+                            child: Container(
+                              color: MyColors.blue,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Text(
+                                    client.amounts[i].toString() + ' €	',
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                ],
+                              ),
+                            )),
+                      )
+                ],
+              ),
+              if (client.history != null)
+                Container(
+                  margin: EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                  child: Text(
+                    'Historique des points',
+                    style:
+                        TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
                   ),
                 ),
-
-
-
-
+              if (client.history != null)
+                for (int i = 0; i < client.history.length; i++)
+                  InkWell(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 5, right: 5),
+                      child: InkWell(
+                          child: itemCard(
+                              client.history[i].date, client.history[i].amout)),
+                    ),
+                  )
             ],
           ),
-        )
-    );
+        ));
   }
 
-
-
-  Widget itemCard(String title) {
+  Widget itemCard(String date, int point) {
     return Padding(
       padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
       child: Container(
           width: MediaQuery.of(context).size.width,
           color: Colors.white,
-          child:  Column(
+          child: Column(
             children: <Widget>[
-              SizedBox(height: 2,),
-              Text(
-                title,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 12.0),
+              SizedBox(
+                height: 2,
               ),
-              SizedBox(height: 2,),
               Container(
                   child: ListTile(
-                    leading: Column(
-                      children: [
-                        Image.asset("images/flag1.png",width: 40,height: 25,),
-                        SizedBox(height: 4,),
-                        Text(
-                          'Argentina',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.0),
-                        ),
-                      ],
-                    ),
-                    title: Text(
-                      "12/10/2022",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12.0),
-                    ),
-                    subtitle: Text(
-                      '18:04',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10.0),
-                    ),
-                    trailing: Column(
-                      children: [
-                        Image.asset("images/flag2.png",width: 40,height: 25,),
-                        SizedBox(height: 4,),
-                        Text(
-                          'Brazil',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.0),
-                        ),
-                      ],
-                    ),
-                  )
-              ),
-
+                leading: Text(
+                  point.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.0),
+                ),
+                title: Text(
+                  date,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.0),
+                ),
+              )),
             ],
-          )
-      ),
+          )),
     );
   }
-
-
 }

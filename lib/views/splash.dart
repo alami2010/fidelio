@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:qatar_wc/styles/colors.dart';
+import 'package:fidelway/styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:qatar_wc/styles/text_constants.dart';
+import 'package:fidelway/styles/text_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

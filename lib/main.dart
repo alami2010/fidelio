@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qatar_wc/styles/colors.dart';
-import 'package:qatar_wc/styles/text_constants.dart';
+import 'package:fidelway/styles/colors.dart';
+import 'package:fidelway/styles/text_constants.dart';
+import 'package:fidelway/views/homeview.dart';
 
 import 'views/mainpage.dart';
 
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Popin',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MainPage(),
+      home:  MainPage(),
     );
   }
 }
