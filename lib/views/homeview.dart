@@ -20,16 +20,13 @@ class _HomeViewState extends State<HomeView> {
 
   void scanQrCode() {
 
-    APIRest.scan("test").then((value) {
-      setState(() {
-        // adding a new marker to map
-        client = value;
-      });
-    });
 
 
-   /* FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+
+    FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
         .then((value) {
+          print("value");
+          print(value);
       if (value != "-1") {
         APIRest.scan(value).then((value) {
           setState(() {
@@ -37,10 +34,8 @@ class _HomeViewState extends State<HomeView> {
             client = value;
           });
         });
-      } else {
-        scanQrCode();
       }
-    });*/
+    });
   }
 
   @override
