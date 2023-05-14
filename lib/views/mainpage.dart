@@ -1,3 +1,4 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:fidelway/views/newsview.dart';
 import 'package:fidelway/views/splash.dart';
 import 'package:fidelway/views/moreview.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+
+import '../utils/local_storage_helper.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -53,7 +56,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home>  with SingleTickerProviderStateMixin{
+class _HomeState extends State<Home>  with SingleTickerProviderStateMixin , AfterLayoutMixin {
 
   TabController controller;
 
@@ -61,8 +64,6 @@ class _HomeState extends State<Home>  with SingleTickerProviderStateMixin{
 
   List<Widget> _buildScreens() {
     return [
-
-
       GenerateScreen(),
       HomeView(),
       MoreView(),
@@ -83,13 +84,13 @@ class _HomeState extends State<Home>  with SingleTickerProviderStateMixin{
           "images/logo.png",
           width: 40,
         ),
-        title: ("FidelWay"),
+        title: ("Scanner"),
         activeColorPrimary: MyColors.btnOk,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.clock_solid),
-        title: ("x"),
+        icon: Icon(CupertinoIcons.settings),
+        title: ("Settings"),
 
         activeColorPrimary: MyColors.backgroundColor2,
         inactiveColorPrimary: CupertinoColors.systemGrey,
@@ -138,6 +139,59 @@ class _HomeState extends State<Home>  with SingleTickerProviderStateMixin{
         navBarStyle: NavBarStyle.style15, // Choose the nav bar style with this property.
       ),
     );
+  }
+
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    // Calling the same function "after layout" to resolve the issue.
+    showHelloWorld();
+  }
+
+  void showHelloWorld() {
+    var shopName = LocalStorageHelper.readShopName();
+    final TextEditingController _nameController = TextEditingController();
+
+    print(shopName);
+    if (shopName == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(50.0))),
+          backgroundColor: Colors.grey,
+          title: Column(
+            children: [
+              const Text(
+                "Bienvenue sur FildeWay ?",
+                style: TextStyle(color: Colors.white),
+              ),
+              const Text(
+                "Veuillez entrer le nom de votre boutique",
+                style: TextStyle(color: Colors.white),)
+            ],
+          ),
+          content: TextFormField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Nom Boutique *',
+            ),
+          ),
+          actions: [
+
+            TextButton(
+                child: const Text("Valider",style: TextStyle(color: Colors.white),),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  print(_nameController.text);
+                  LocalStorageHelper.writeShopName(_nameController.text);
+
+                }),
+          ],
+        ),
+      );
+    }
   }
 
 }

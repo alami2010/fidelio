@@ -7,6 +7,8 @@ class Client {
   String name;
   String code;
   List<int> amounts =[];
+  List<String> fastFoodRepas;
+
   List<History> history =[];
 
   Client({this.id, this.solde, this.email, this.name, this.code,this.amounts, this.history});
@@ -24,6 +26,8 @@ class Client {
       });
     }
     amounts = json['amounts'].cast<int>();
+    fastFoodRepas = json['fastFoodRepas'].cast<String>();
+
 
   }
 
@@ -35,6 +39,8 @@ class Client {
     data['name'] = this.name;
     data['code'] = this.code;
     data['amounts'] = this.amounts;
+    data['fastFoodRepas'] = this.fastFoodRepas;
+
 
     if (this.history != null) {
       data['history'] = this.history.map((v) => v.toJson()).toList();

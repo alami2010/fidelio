@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../styles/colors.dart';
 import '../styles/text_constants.dart';
+import '../utils/local_storage_helper.dart';
+import 'moreviewAPropos.dart';
 
 class MoreView extends StatefulWidget {
   const MoreView({Key key}) : super(key: key);
@@ -68,59 +69,44 @@ class _MoreViewState extends State<MoreView> {
                 ),
               ),*/
               Container(
-                padding: EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                ),
-                margin: EdgeInsets.only(bottom: 3),
-                child: InkWell(
-                  onTap: () {},
-                  child: Card(
-                    elevation: 1,
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.notes,
-                        color: MyColors.grey3,
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  margin: EdgeInsets.only(bottom: 3),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AProposPage()));
+                    },
+                    child: Card(
+                      elevation: 1,
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.shopping_bag,
+                          color: MyColors.grey3,
+                        ),
+                        title: Text(LocalStorageHelper.readShopName()),
                       ),
-                      title: Text("Terms & Conditions"),
                     ),
-                  ),
-                ),
-              ),
+                  )),
               Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                margin: EdgeInsets.only(bottom: 3),
-                child: InkWell(
-                  onTap: () {},
-                  child: Card(
-                    elevation: 1,
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.share,
-                        color: MyColors.grey3,
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  margin: EdgeInsets.only(bottom: 3),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AProposPage()));
+                    },
+                    child: Card(
+                      elevation: 1,
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.info,
+                          color: MyColors.grey3,
+                        ),
+                        title: Text("à propos"),
                       ),
-                      title: Text("Share Now"),
                     ),
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                margin: EdgeInsets.only(bottom: 3),
-                child: InkWell(
-                  onTap: () {},
-                  child: Card(
-                    elevation: 1,
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.details,
-                        color: MyColors.grey3,
-                      ),
-                      title: Text("About"),
-                    ),
-                  ),
-                ),
-              ),
+                  )),
+
             ],
           ),
         ),

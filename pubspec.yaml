@@ -23,10 +23,11 @@ dependencies:
   expandable: ^5.0.1
   flutter_dash: ^0.0.1
   percent_indicator: ^4.0.1
-  shared_preferences: ^2.0.0
+  shared_preferences: ^2.0.15
   flutter_barcode_scanner: ^2.0.0
   qr_flutter: ^4.0.0
   path_provider: ^2.0.11
+  after_layout: ^1.2.0
 
 
 analyzer:

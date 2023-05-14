@@ -1,8 +1,7 @@
 import 'package:carousel_pro/carousel_pro.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fidelway/styles/text_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:fidelway/styles/text_constants.dart';
 
 import '../model/APIRest.dart';
 import '../model/Client.dart';
@@ -21,15 +20,27 @@ class _HomeViewState extends State<HomeView> {
 
   void scanQrCode() {
 
- FlutterBarcodeScanner.scanBarcode("#000000", "Cancel", true, ScanMode.QR)
-        .then((value) {
-      APIRest.scan(value).then((value) {
-        setState(() {
-          // adding a new marker to map
-          client = value;
-        });
+    APIRest.scan("test").then((value) {
+      setState(() {
+        // adding a new marker to map
+        client = value;
       });
     });
+
+
+   /* FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+        .then((value) {
+      if (value != "-1") {
+        APIRest.scan(value).then((value) {
+          setState(() {
+            // adding a new marker to map
+            client = value;
+          });
+        });
+      } else {
+        scanQrCode();
+      }
+    });*/
   }
 
   @override
@@ -53,7 +64,6 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-
               SizedBox(
                   height: 200.0,
                   width: MediaQuery.of(context).size.width,
@@ -72,7 +82,6 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   )),
-
               Container(
                   height: 150,
                   margin: EdgeInsets.only(left: 7, bottom: 5),
@@ -88,7 +97,6 @@ class _HomeViewState extends State<HomeView> {
                                   Colors.white),
                             ),
                             onPressed: () {
-
                               scanQrCode();
                             },
                             child: Text('Scanner'))
@@ -128,7 +136,7 @@ class _HomeViewState extends State<HomeView> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Text(
-                              "Deconnection",
+                              "Déconnexion",
                               style: TextStyle(color: Colors.white),
                             )
                           ],
@@ -138,10 +146,10 @@ class _HomeViewState extends State<HomeView> {
               Row(
                 children: [
                   if (client.amounts != null)
-                    for (int i = 0; i < client.amounts.length; i++)
+                    for (int i = 0; i < client.fastFoodRepas.length; i++)
                       InkWell(
                         onTap: () {
-                          APIRest.minus(client.code, client.amounts[i])
+                          APIRest.minus(client.code, getAmount(client.fastFoodRepas[i]))
                               .then((value) {
                             setState(() {
                               // adding a new marker to map
@@ -150,8 +158,8 @@ class _HomeViewState extends State<HomeView> {
                           });
                         },
                         child: Container(
-                            height: 70,
-                            width: 70,
+                            height: 100,
+                            width: 100,
                             margin: EdgeInsets.only(left: 7, bottom: 5),
                             child: Container(
                               color: MyColors.blue,
@@ -159,10 +167,11 @@ class _HomeViewState extends State<HomeView> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  Text(
-                                    client.amounts[i].toString() + ' €	',
-                                    style: TextStyle(color: Colors.white),
-                                  )
+                                  Image.asset(
+                                    "images/"+client.fastFoodRepas[i]+".png",
+                                    width: 40,
+                                  ),
+
                                 ],
                               ),
                             )),
@@ -191,6 +200,19 @@ class _HomeViewState extends State<HomeView> {
             ],
           ),
         ));
+  }
+
+  int getAmount(String repas) {
+    if(repas == "coca"){
+      return  5;}
+
+    else  if(repas == "burger"){
+      return    10;
+    }
+    else  if(repas == "menu"){
+      return    15;
+    }
+    return 0;
   }
 
   Widget itemCard(String date, int point) {

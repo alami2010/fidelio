@@ -43,11 +43,11 @@ class APIRest {
 
     final response = await http.post(Uri.parse(url),
         body: json.encode(data), headers: buildHeader());
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return Client.fromJson(json.decode(response.body));
     } else {
       //Tools.show("Erreur lors de get agency");
-      throw Exception('Erreur lors de get agency');
+      throw Exception('Erreur lors create carte');
     }
   }
 

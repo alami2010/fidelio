@@ -10,6 +10,8 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../utils/local_storage_helper.dart';
+
 class GenerateScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => GenerateScreenState();
@@ -87,7 +89,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                 controller: _telController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Numéro de télephone *',
+                  labelText: 'Email  *',
                 ),
               )
             ]),
@@ -106,10 +108,14 @@ class GenerateScreenState extends State<GenerateScreen> {
                   ),
                   child: Text(" Créer "),
                   onPressed: () {
-                    setState(() {
-                      _dataString = "les_halles_" +
-                          DateTime.now().microsecondsSinceEpoch.toString();
+                    print(LocalStorageHelper.readShopName());
 
+                    setState(() {
+                      _dataString = (LocalStorageHelper.readShopName() == null
+                              ? "shop_"
+                              : LocalStorageHelper.readShopName()) +
+                          DateTime.now().microsecondsSinceEpoch.toString();
+                      print(_dataString);
                       APIRest.create(_dataString, _nameController.text,
                               _telController.text)
                           .then((value) {
@@ -133,7 +139,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  child: Text("Scanner"),
+                  child: Text("Enregistrer"),
                   onPressed: () {
                     setState(() {
                       FlutterBarcodeScanner.scanBarcode(
