@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../styles/colors.dart';
 import '../styles/text_constants.dart';
 import '../utils/local_storage_helper.dart';
+import 'TypeFidelWay.dart';
 import 'moreviewAPropos.dart';
 
 class MoreView extends StatefulWidget {
@@ -106,7 +107,25 @@ class _MoreViewState extends State<MoreView> {
                       ),
                     ),
                   )),
-
+              Container(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  margin: EdgeInsets.only(bottom: 3),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => TypeFidelWay()));
+                    },
+                    child: Card(
+                      elevation: 1,
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.info,
+                          color: MyColors.grey3,
+                        ),
+                        title: Text("type d'application"),
+                      ),
+                    ),
+                  )),
             ],
           ),
         ),

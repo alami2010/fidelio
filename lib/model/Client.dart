@@ -8,6 +8,8 @@ class Client {
   String code;
   List<int> amounts =[];
   List<String> fastFoodRepas;
+  List<String> pizza;
+  List<String> coiffeur;
 
   List<History> history =[];
 
@@ -27,7 +29,8 @@ class Client {
     }
     amounts = json['amounts'].cast<int>();
     fastFoodRepas = json['fastFoodRepas'].cast<String>();
-
+    pizza = json['pizza'].cast<String>();
+    coiffeur = json['coiffeur'].cast<String>();
 
   }
 
@@ -40,6 +43,8 @@ class Client {
     data['code'] = this.code;
     data['amounts'] = this.amounts;
     data['fastFoodRepas'] = this.fastFoodRepas;
+    data['pizza'] = this.pizza;
+    data['coiffeur'] = this.coiffeur;
 
 
     if (this.history != null) {

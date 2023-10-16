@@ -6,6 +6,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import '../model/APIRest.dart';
 import '../model/Client.dart';
 import '../styles/colors.dart';
+import '../utils/local_storage_helper.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key key}) : super(key: key);
@@ -20,13 +21,9 @@ class _HomeViewState extends State<HomeView> {
 
   void scanQrCode() {
 
-
-
-
-    FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
+     FlutterBarcodeScanner.scanBarcode("#000000", "Sortir", true, ScanMode.QR)
         .then((value) {
-          print("value");
-          print(value);
+
       if (value != "-1") {
         APIRest.scan(value).then((value) {
           setState(() {
@@ -41,6 +38,9 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     print(client);
+
+    var mode = LocalStorageHelper.readMode();
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -138,41 +138,43 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       )),
                 ),
-              Row(
-                children: [
-                  if (client.amounts != null)
-                    for (int i = 0; i < client.fastFoodRepas.length; i++)
-                      InkWell(
-                        onTap: () {
-                          APIRest.minus(client.code, getAmount(client.fastFoodRepas[i]))
-                              .then((value) {
-                            setState(() {
-                              // adding a new marker to map
-                              client = value;
+              if (mode.isEmpty || mode == 1.toString())
+                Row(
+                  children: [
+                    if (client.amounts != null)
+                      for (int i = 0; i < client.amounts.length; i++)
+                        InkWell(
+                          onTap: () {
+                            APIRest.minus(client.code, client.amounts[i])
+                                .then((value) {
+                              setState(() {
+                                // adding a new marker to map
+                                client = value;
+                              });
                             });
-                          });
-                        },
-                        child: Container(
-                            height: 100,
-                            width: 100,
-                            margin: EdgeInsets.only(left: 7, bottom: 5),
-                            child: Container(
-                              color: MyColors.blue,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "images/"+client.fastFoodRepas[i]+".png",
-                                    width: 40,
-                                  ),
-
-                                ],
-                              ),
-                            )),
-                      )
-                ],
-              ),
+                          },
+                          child: Container(
+                              height: 100,
+                              width: 100,
+                              margin: EdgeInsets.only(left: 7, bottom: 5),
+                              child: Container(
+                                color: MyColors.blue,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Text(
+                                      client.amounts[i].toString() + ' €	',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        )
+                  ],
+                )
+              else
+                buildRow(mode),
               if (client.history != null)
                 Container(
                   margin: EdgeInsets.only(left: 10, top: 5, bottom: 5),
@@ -197,16 +199,62 @@ class _HomeViewState extends State<HomeView> {
         ));
   }
 
-  int getAmount(String repas) {
-    if(repas == "coca"){
-      return  5;}
+  Row buildRow(String mode) {
+    List<String> list = [];
 
-    else  if(repas == "burger"){
-      return    10;
+    if (mode == 2.toString()) list = client.fastFoodRepas;
+    if (mode == 3.toString()) list = client.pizza;
+    if (mode == 4.toString()) list = client.coiffeur;
+
+    return Row(
+      children: [
+        if (list != null)
+          for (int i = 0; i < list.length; i++)
+            InkWell(
+              onTap: () {
+                APIRest.minus(client.code, getAmount(list[i])).then((value) {
+                  setState(() {
+                    // adding a new marker to map
+                    client = value;
+                  });
+                });
+              },
+              child: Container(
+                  height: 100,
+                  width: 100,
+                  margin: EdgeInsets.only(left: 7, bottom: 5),
+                  child: Container(
+                    color: MyColors.blue,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Image.asset(
+                          "images/" + list[i]+".png",
+                          width: 40,
+                        ),
+                      ],
+                    ),
+                  )),
+            )
+      ],
+    );
+  }
+
+  int getAmount(String repas) {
+    if (repas == "coca") {
+      return 5;
+    } else if (repas == "burger") {
+      return 10;
+    } else if (repas == "menu") {
+      return 15;
+    } else if (repas == "coca_pizza") {
+      return 3;
+    } else if (repas == "pizza") {
+      return 5;
+    } else if (repas == "coiffeur") {
+      return 6;
     }
-    else  if(repas == "menu"){
-      return    15;
-    }
+
     return 0;
   }
 
