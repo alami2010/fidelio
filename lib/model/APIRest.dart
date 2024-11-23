@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 const isLocal = false;
 const baseUrl =
-    isLocal ? "http://localhost:8080/api/" : "https://go-dance.fr/api/api/";
+    isLocal ? "http://localhost:8080/api/" : "https://dinapolipizzacarrieres.fr/api/api/";
 
 Map<String, String> buildHeader() {
   return <String, String>{
