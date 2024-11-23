@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:fidelway/model/APIRest.dart';
@@ -101,7 +102,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                 width: 150,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.yellow,
+                    primary: Colors.yellow,
                     backgroundColor: Colors.black,
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -134,7 +135,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                 width: 150,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.yellow,
+                    primary: Colors.yellow,
                     backgroundColor: Colors.black,
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
